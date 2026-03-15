@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockSheild — India's AI Stock Manipulation Detector</title>
+  <meta name="description" content="Detect stock market manipulation in Indian markets (NSE/BSE) using AI. Analyze suspicious tips, pump-and-dump schemes, and unusual trading patterns." />
+  <meta name="keywords" content="stock manipulation, Indian stock market, NSE, BSE, pump and dump, AI detector, stock fraud" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ═══ Animated Background Particles ═══ -->
+  <div class="bg-grid"></div>
+  <div class="bg-particles" id="particles"></div>
+
+  <!-- ═══ Header ═══ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 4L54 18V42L30 56L6 42V18L30 4Z" stroke="url(#shieldGrad)" stroke-width="2.5" fill="rgba(139,0,0,0.15)"/>
+            <path d="M30 12L48 22V38L30 48L12 38V22L30 12Z" stroke="url(#shieldGrad2)" stroke-width="1.5" fill="rgba(220,20,60,0.08)"/>
+            <path d="M22 28L28 34L38 24" stroke="#dc143c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="shieldGrad" x1="6" y1="4" x2="54" y2="56">
+                <stop stop-color="#dc143c"/>
+                <stop offset="1" stop-color="#8b0000"/>
+              </linearGradient>
+              <linearGradient id="shieldGrad2" x1="12" y1="12" x2="48" y2="48">
+                <stop stop-color="#ff4444"/>
+                <stop offset="1" stop-color="#dc143c"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Stock<span>Sheild</span></h1>
+          <p class="tagline">India's AI Stock Manipulation Detector</p>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        NSE / BSE Protected
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ Main Layout ═══ -->
+  <main class="main-layout">
+    <!-- ── Left: Analysis Panel ── -->
+    <section class="analysis-panel">
+      <!-- Input Card -->
+      <div class="card input-card">
+        <div class="card-header">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <h2>Analyze Stock</h2>
+        </div>
+
+        <form id="analyzeForm" autocomplete="off">
+          <div class="input-group">
+            <label for="symbolInput">Stock Symbol</label>
+            <div class="input-wrapper">
+              <input type="text" id="symbolInput" placeholder="e.g. RELIANCE, TATAMOTORS, YESBANK" spellcheck="false" />
+              <span class="input-suffix">.NS</span>
+            </div>
+            <span class="input-hint">Enter NSE symbol — BSE supported too (add .BO)</span>
+          </div>
+
+          <div class="input-group">
+            <label for="tipInput">Suspicious Tip / Message</label>
+            <textarea id="tipInput" rows="4" placeholder="Paste any stock tip, WhatsApp forward, Telegram message, or social media post you want analyzed..."></textarea>
+          </div>
+
+          <button type="submit" id="scanBtn" class="scan-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L12 6M12 18L12 22M2 12H6M18 12H22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93"/>
+            </svg>
+            <span>Scan for Manipulation</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Scanning Animation Overlay -->
+      <div class="scan-overlay" id="scanOverlay">
+        <div class="scan-container">
+          <div class="radar">
+            <div class="radar-ring ring-1"></div>
+            <div class="radar-ring ring-2"></div>
+            <div class="radar-ring ring-3"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-center"></div>
+          </div>
+          <p class="scan-text" id="scanText">Initializing scan...</p>
+          <div class="scan-progress">
+            <div class="scan-progress-bar" id="scanProgressBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="results-panel" id="resultsPanel" style="display:none;">
+        <!-- Stock Info Bar -->
+        <div class="card stock-info-card" id="stockInfoCard" style="display:none;">
+          <div class="stock-info-grid">
+            <div class="stock-info-main">
+              <h3 id="stockName">—</h3>
+              <span class="stock-symbol" id="stockSymbol">—</span>
+            </div>
+            <div class="stock-price-block">
+              <span class="stock-price" id="stockPrice">—</span>
+              <span class="stock-change" id="stockChange">—</span>
+            </div>
+            <div class="stock-meta">
+              <div class="meta-item"><span class="meta-label">Market Cap</span><span class="meta-val" id="stockMcap">—</span></div>
+              <div class="meta-item"><span class="meta-label">P/E</span><span class="meta-val" id="stockPE">—</span></div>
+              <div class="meta-item"><span class="meta-label">Vol Spike</span><span class="meta-val" id="stockVolSpike">—</span></div>
+              <div class="meta-item"><span class="meta-label">90d Change</span><span class="meta-val" id="stockPriceChange">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score + Verdict -->
+        <div class="card score-card">
+          <div class="score-verdict-row">
+            <div class="score-gauge-wrapper">
+              <div class="score-gauge" id="scoreGauge">
+                <svg viewBox="0 0 160 160">
+                  <circle cx="80" cy="80" r="70" class="gauge-bg"/>
+                  <circle cx="80" cy="80" r="70" class="gauge-fill" id="gaugeFill"
+                    stroke-dasharray="440" stroke-dashoffset="440"/>
+                </svg>
+                <div class="score-value" id="scoreValue">0</div>
+                <div class="score-label">RISK SCORE</div>
+              </div>
+            </div>
+            <div class="verdict-block">
+              <div class="verdict-badge" id="verdictBadge">—</div>
+              <div class="manipulation-type" id="manipulationType">—</div>
+              <div class="recommendation" id="recommendation">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Red Flags -->
+        <div class="card flags-card" id="flagsCard" style="display:none;">
+          <div class="card-header">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
+            </svg>
+            <h2>Red Flags Detected</h2>
+          </div>
+          <ul class="flags-list" id="flagsList"></ul>
+        </div>
+
+        <!-- Detailed Analysis -->
+        <div class="card analysis-card">
+          <div class="card-header">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <h2>AI Analysis</h2>
+          </div>
+          <div class="analysis-text" id="analysisText"></div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="card error-card" id="errorCard" style="display:none;">
+        <div class="error-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#dc143c" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+          <p id="errorText"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Right: Alert Feed ── -->
+    <aside class="alert-sidebar">
+      <div class="sidebar-header">
+        <div class="live-indicator">
+          <span class="live-dot"></span>
+          LIVE ALERTS
+        </div>
+        <span class="alert-count" id="alertCount">0</span>
+      </div>
+      <div class="alert-feed" id="alertFeed">
+        <div class="alert-skeleton">
+          <div class="skel-line skel-w70"></div>
+          <div class="skel-line skel-w50"></div>
+          <div class="skel-line skel-w90"></div>
+        </div>
+        <div class="alert-skeleton">
+          <div class="skel-line skel-w60"></div>
+          <div class="skel-line skel-w80"></div>
+          <div class="skel-line skel-w40"></div>
+        </div>
+        <div class="alert-skeleton">
+          <div class="skel-line skel-w75"></div>
+          <div class="skel-line skel-w55"></div>
+          <div class="skel-line skel-w85"></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="footer">
+    <p>⚠️ StockSheild is for <strong>educational purposes only</strong>. Not financial advice. Always do your own research before investing.</p>
+    <p class="footer-sub">Powered by Yahoo Finance & Google Gemini AI • Built for Indian Markets (NSE/BSE)</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
